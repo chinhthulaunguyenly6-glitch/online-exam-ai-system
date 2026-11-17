@@ -34,6 +34,8 @@ Hệ thống **"Online Examination System with Real-time AI Proctoring"** đư�
 * **Phân hệ Thí sinh & Module AI (`Student & AI Module`):**
   * `student-exam.html`: Giao diện làm bài thi trực tuyến tích hợp khung Webcam giám sát AI ở góc phải và cơ chế tự động khóa bài khi vi phạm quá số lần quy định (3 lần).
   * `ai-webcam.html`: Module kiểm thử độc lập luồng camera, khung quét nhận diện khuôn mặt (Bounding Box) và mô phỏng trạng thái cảnh báo AI.
+## Sơ đồ ERD
+![Sơ đồ ERD](erd.png)
 
 ## 4. Công nghệ sử dụng
 
