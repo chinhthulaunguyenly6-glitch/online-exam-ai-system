@@ -69,7 +69,22 @@ online-exam-ai-system/
 ├── .gitignore                  # Loại trừ thư mục nặng/bảo mật (node_modules, .env)
 └── README.md                   # Tài liệu đặc tả dự án
 ```
-## NHÓM THỰC HIỆN
+## Tài liệu dự án
+
+| Tài liệu | Mô tả |
+| :--- | :--- |
+| [ai-webcam.html](ai-webcam.html) | Giao diện giám sát AI qua webcam |
+| [index.html](index.html) | Trang chủ hệ thống thi trắc nghiệm |
+| [student-exam.html](student-exam.html) | Màn hình làm bài thi chính thức của thí sinh |
+| [student-home.html](student-home.html) | Trang tổng quan (Dashboard) của học sinh |
+| [student-result.html](student-result.html) | Trang hiển thị kết quả và điểm thi |
+| [style.css](style.css) | Tệp định dạng giao diện (CSS) chung cho toàn hệ thống |
+| [teacher-classes.html](teacher-classes.html) | Quản lý danh sách lớp học của giảng viên |
+| [teacher-dashboard.html](teacher-dashboard.html) | Trang tổng quan dành cho giảng viên |
+| [teacher-history.html](teacher-history.html) | Lịch sử các kỳ thi và bài kiểm tra đã tạo |
+| [teacher-monitor.html](teacher-monitor.html) | Màn hình giảng viên giám sát phòng thi trực tuyến |
+| [teacher-questions.html](teacher-questions.html) | Quản lý ngân hàng câu hỏi trắc nghiệm |
+| [teacher-reports.html](teacher-reports.html) | Thống kê và báo cáo kết quả thi của sinh viên |
 * **Nhóm 6**
 * Học phần: **Đồ Án 1**
 * Trường Quốc tế- Đại học Quốc gia Hà Nội
