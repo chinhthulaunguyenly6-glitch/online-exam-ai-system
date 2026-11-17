@@ -1,18 +1,20 @@
 #  HỆ THỐNG THI TRẮC NGHIỆM TRỰC TUYẾN
 # online-exam-ai-system
-## 1. Mục tiêu dự án
-### 1.1. Đặt vấn đề & Thách thức thực tế
+## 1. Giới thiệu
+ **"Hệ thống Thi Trắc Nghiệm Trực Tuyến & Giám Sát AI (AI Proctoring System)"** là nền tảng web toàn diện được xây dựng nhằm giải quyết bài toán tổ chức thi cử trực tuyến một cách an toàn, minh bạch và chống gian lận hiệu quả. Dự án được thiết kế với giao diện hiện đại, trực quan theo bộ nhận diện Xanh dương đậm (#1E3A8A) và Trắng (#FFFFFF), đáp ứng trọn vẹn quy trình khảo thí cho cả hai phân hệ Giảng viên và Thí sinh. Về phía Giảng viên, hệ thống số hóa hoàn toàn từ khâu khởi tạo phòng thi, quản lý ngân hàng câu hỏi, điều phối danh sách lớp học phần cho đến phòng giám sát AI trực tiếp — cho phép theo dõi đồng thời 35–40 thí sinh, lọc nhanh các cảnh báo vi phạm và can thiệp kỷ luật tại chỗ (gửi nhắc nhở, tạm khóa bài làm hoặc đình chỉ thi), đồng thời tự động lưu trữ nhật ký vi phạm và thống kê phổ điểm báo cáo. Về phía Thí sinh, giao diện làm bài tích hợp đồng hồ đếm ngược, bảng điều hướng câu hỏi nhanh cùng luồng Webcam AI giám sát thời gian thực ở góc phải, giúp tự động nhận diện hành vi rời khỏi khung hình, quay mặt đi hướng khác hay chuyển tab trình duyệt để đảm bảo tính công bằng tuyệt đối cho kỳ thi.
+## 2. Mục tiêu dự án
+### 2.1. Đặt vấn đề & Thách thức thực tế
 Trong kỷ nguyên giáo dục trực tuyến và đào tạo tín chỉ hiện nay, việc tổ chức các kỳ thi trắc nghiệm quy mô lớn gặp phải nhiều thách thức nghiêm trọng:
 * **Áp lực giám sát:** Một giám thị phải quản lý hàng chục sinh viên qua màn hình, dẫn đến việc khó phát hiện kịp thời các hành vi gian lận tinh vi (như sử dụng tài liệu, trao đổi nhóm hoặc nhìn sang màn hình phụ).
 * **Độ trễ phản hồi:** Các hệ thống thi truyền thống thiếu cơ chế cảnh báo hành vi bất thường thời gian thực, khiến việc xử lý vi phạm thường phải đợi đến khi hậu kiểm video ghi hình (mất rất nhiều thời gian).
 * **Tải trọng máy chủ:** Việc xử lý luồng video giám sát trực tiếp của toàn bộ thí sinh trên máy chủ (Server-side rendering) dễ gây nghẽn băng thông và quá tải hệ thống.
 
-### 1.2. Giải pháp và Kiến trúc hệ thống
+### 2.2. Giải pháp và Kiến trúc hệ thống
 Hệ thống **"Online Examination System with Real-time AI Proctoring"** được nghiên cứu và phát triển nhằm giải quyết triệt để các bài toán trên thông qua mô hình phân tán thông minh:
 * **Edge Computing (Điện toán biên AI):** Tận dụng năng lực tính toán của trình duyệt phía client để chạy mô hình nhận diện khuôn mặt (`face-api.js`), giảm tải 90% băng thông cho máy chủ trung tâm.
 * **Real-time Event-driven Architecture:** Ứng dụng công nghệ WebSocket (`Socket.IO`) để lập tức truyền tải các sự kiện vi phạm từ máy thí sinh lên màn hình điều khiển của giám thị ngay khi hành vi xảy ra.
 
-### 1.3. Mục tiêu Cụ thể của Đồ án
+### 2.3. Mục tiêu Cụ thể của Đồ án
 * **Đối với Giảng viên:**
   * Số hóa toàn bộ quy trình từ khâu tạo phòng thi, quản lý ngân hàng câu hỏi, phân bổ danh sách lớp học phần đến việc chấm điểm và xuất báo cáo thống kê.
   * Cung cấp công cụ giám sát tập trung theo thời gian thực (Real-time Monitoring), cho phép theo dõi đồng thời hàng chục thí sinh trong cùng một ca thi và can thiệp xử lý vi phạm ngay lập tức (nhắc nhở, tạm khóa bài hoặc đình chỉ thi).
@@ -21,7 +23,7 @@ Hệ thống **"Online Examination System with Real-time AI Proctoring"** đư�
 * **Đối với Hệ thống AI Proctoring:**
   * Ứng dụng thị giác máy tính (Computer Vision) và các sự kiện trình duyệt để tự động phát hiện, cảnh báo và ghi nhật ký các hành vi bất thường như: rời khỏi khung hình webcam, quay mặt đi hướng khác, xuất hiện nhiều khuôn mặt hoặc chuyển đổi tab trình duyệt.
 
-## 2. Chức năng chính của hệ thống
+## 3. Chức năng chính của hệ thống
 * **Phân hệ Giảng viên (`Teacher Portal`):**
   * `teacher-dashboard.html`: Quản lý danh sách phòng thi, theo dõi trạng thái ca thi và điều hướng nhanh vào phòng giám sát.
   * `teacher-questions.html`: Quản lý, tìm kiếm và bổ sung ngân hàng câu hỏi trắc nghiệm theo từng môn học.
@@ -33,7 +35,7 @@ Hệ thống **"Online Examination System with Real-time AI Proctoring"** đư�
   * `student-exam.html`: Giao diện làm bài thi trực tuyến tích hợp khung Webcam giám sát AI ở góc phải và cơ chế tự động khóa bài khi vi phạm quá số lần quy định (3 lần).
   * `ai-webcam.html`: Module kiểm thử độc lập luồng camera, khung quét nhận diện khuôn mặt (Bounding Box) và mô phỏng trạng thái cảnh báo AI.
 
-## 3. Công nghệ sử dụng
+## 4. Công nghệ sử dụng
 
 | Thành phần | Công nghệ / Thư viện | Vai trò trong hệ thống |
 | :--- | :--- | :--- |
@@ -42,7 +44,7 @@ Hệ thống **"Online Examination System with Real-time AI Proctoring"** đư�
 | **AI & Thị giác máy tính** | `face-api.js`, HTML5 WebRTC (`getUserMedia`) | Truy cập luồng video từ Webcam, phát hiện khuôn mặt và phân tích hướng nhìn trực tiếp trên trình duyệt. |
 | **Giám sát trình duyệt** | Page Visibility API (`visibilitychange`) | Phát hiện chính xác hành vi thí sinh chuyển tab hoặc rời khỏi cửa sổ làm bài thi. |
 | **Kiến trúc kết nối** | RESTful API (`fetch` / Async-Await) | Tích hợp lớp dịch vụ gọi API sẵn sàng kết nối Backend Server, đi kèm cơ chế dữ liệu dự phòng (Fallback). |
-## 4.Tổ chức Mã nguồn (Repository Structure)
+## 5.Tổ chức Mã nguồn (Repository Structure)
 
 ```text
 online-exam-ai-system/
