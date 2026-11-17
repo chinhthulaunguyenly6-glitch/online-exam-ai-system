@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả Bài thi - Hệ thống Thi Trắc nghiệm</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-hover: #172554;
+            --light-blue: #EFF6FF;
+            --bg-white: #FFFFFF;
+            --bg-gray: #F8FAFC;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --success-green: #16A34A;
+            --warning-amber: #D97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .result-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.08);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: var(--success-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card h2 {
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .exam-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .score-display-box {
+            background: var(--light-blue);
+            border: 2px dashed #93C5FD;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .score-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            text-align: left;
+            background: var(--bg-gray);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .details-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .details-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: var(--bg-white);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-brand">HỆ THỐNG THI TRẮC NGHIỆM TRỰC TUYẾN</div>
+    </header>
+
+    <div class="container">
+        <div class="result-card">
+            <div class="success-icon">✓</div>
+            <h2>NỘP BÀI THI THÀNH CÔNG</h2>
+            <div class="exam-subtitle">Môn thi: Đồ Án 1 (Giữa kỳ) | Ngày thi: 20/10/2026</div>
+
+            <div class="score-display-box">
+                <div class="score-number" id="finalScore">8.5</div>
+                <div class="score-label">Điểm số tổng kết (Thang điểm 10)</div>
+            </div>
+
+            <div class="details-grid">
+                <div>
+                    <div class="details-item"><strong>Họ tên:</strong> Nguyễn Văn A</div>
+                    <div class="details-item"><strong>MSSV:</strong> 20241234</div>
+                    <div class="details-item"><strong>Thời gian làm bài:</strong> <span id="timeSpent">54 phút 20 giây</span></div>
+                </div>
+                <div>
+                    <div class="details-item"><strong>Số câu đúng:</strong> <span id="correctCount">34</span> / 40 câu</div>
+                    <div class="details-item"><strong>Thời gian nộp:</strong> 10:54</div>
+                    <div class="details-item"><strong>Số lần AI cảnh báo:</strong> <span id="warningCountDisplay" style="color: var(--warning-amber); font-weight: bold;">1 lần</span></div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="student-home.html" class="btn btn-primary">VỀ TRANG CHỦ</a>
+                <a href="index.html" class="btn btn-outline">ĐĂNG XUẤT</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lấy dữ liệu tạm từ trang thi truyền sang (nếu có)
+        const answered = localStorage.getItem('examAnswered');
+        const warnings = localStorage.getItem('examWarnings');
+
+        if (answered !== null) {
+            const count = parseInt(answered);
+            document.getElementById('correctCount').innerText = count;
+            // Tính điểm giả lập dựa trên số câu làm được (ví dụ tối đa 40 câu)
+            const score = ((count / 40) * 10).toFixed(1);
+            document.getElementById('finalScore').innerText = score;
+        }
+
+        if (warnings !== null) {
+            document.getElementById('warningCountDisplay').innerText = warnings + ' lần';
+        }
+    </script>
+</body>
+</html>

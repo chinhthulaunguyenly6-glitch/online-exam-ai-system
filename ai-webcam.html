@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Proctoring Webcam Monitor</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0F172A; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        h2 { margin-bottom: 1.5rem; color: #60A5FA; letter-spacing: 0.5px; }
+
+        .video-container { 
+            position: relative; 
+            width: 640px; 
+            height: 480px; 
+            background: #1E293B; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 3px solid #334155; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+        }
+
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transform: scaleX(-1); /* Lật gương webcam */
+        }
+
+        /* Khung nhận diện AI quét giả lập */
+        .ai-box {
+            position: absolute;
+            top: 70px;
+            left: 170px;
+            width: 300px;
+            height: 340px;
+            border: 2px dashed #22C55E;
+            border-radius: 12px;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            transition: 0.3s;
+        }
+
+        .ai-box.warning {
+            border-color: #EF4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .ai-tag {
+            background: rgba(34, 197, 94, 0.85);
+            color: #FFF;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            align-self: flex-start;
+        }
+
+        .ai-box.warning .ai-tag {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #DC2626;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .status-box { 
+            margin-top: 1.25rem; 
+            padding: 0.85rem 1.5rem; 
+            background: #1E293B; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            border: 1px solid #475569; 
+            text-align: center;
+            max-width: 640px;
+            width: 100%;
+        }
+
+        .safe { color: #22C55E; font-weight: bold; }
+        .danger { color: #EF4444; font-weight: bold; }
+
+        .control-panel {
+            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.88rem;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #3B82F6; color: white; }
+        .btn-primary:hover { background: #2563EB; }
+        .btn-danger { background: #EF4444; color: white; }
+        .btn-danger:hover { background: #DC2626; }
+    </style>
+</head>
+<body>
+
+    <h2>HỆ THỐNG AI PROCTORING - GIÁM SÁT WEBCAM THỜI GIAN THỰC</h2>
+    
+    <div class="video-container">
+        <div class="live-badge">● LIVE AI STREAM</div>
+        <video id="webcamVideo" autoplay muted playsinline></video>
+        
+        <!-- Khung quét AI động -->
+        <div class="ai-box" id="aiBoundingBox">
+            <span class="ai-tag" id="aiTagText">FACE DETECTED: 98.7%</span>
+            <span style="font-size: 0.7rem; color: #E2E8F0; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; align-self: center;" id="aiGaze">Ánh nhìn: Tập trung màn hình</span>
+        </div>
+    </div>
+
+    <div class="status-box">
+        Trạng thái giám sát: <span id="aiStatus" class="safe">✔ Thí sinh đang làm bài bình thường. Không phát hiện vi phạm.</span>
+    </div>
+
+    <div class="control-panel">
+        <button class="btn btn-primary" onclick="simulateNormal()">Mô phỏng: Bình thường</button>
+        <button class="btn btn-danger" onclick="simulateViolation()">Mô phỏng: Cảnh báo vi phạm</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('webcamVideo');
+        const statusSpan = document.getElementById('aiStatus');
+        const aiBox = document.getElementById('aiBoundingBox');
+        const aiTagText = document.getElementById('aiTagText');
+        const aiGaze = document.getElementById('aiGaze');
+
+        // Khởi động Webcam thực tế từ máy tính
+        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error("Lỗi truy cập webcam: ", err);
+                statusSpan.innerHTML = "<span class='danger'>❌ Không thể truy cập Webcam! Hãy kiểm tra lại quyền trình duyệt.</span>";
+            });
+
+        // Hàm mô phỏng trạng thái bình thường
+        function simulateNormal() {
+            aiBox.classList.remove('warning');
+            aiTagText.innerText = "FACE DETECTED: 99.1%";
+            aiGaze.innerText = "Ánh nhìn: Tập trung màn hình";
+            statusSpan.innerHTML = "<span class='safe'>✔ Thí sinh đang làm bài bình thường. Không phát hiện vi phạm.</span>";
+        }
+
+        // Hàm mô phỏng phát hiện vi phạm (để thầy cô xem demo trực quan)
+        function simulateViolation() {
+            aiBox.classList.add('warning');
+            aiTagText.innerText = "⚠️ ANOMALY: QUAY MẶT ĐI";
+            aiGaze.innerText = "Ánh nhìn: Lệch hướng > 45°";
+            statusSpan.innerHTML = "<span class='danger'>🚨 CẢNH BÁO AI: Phát hiện thí sinh quay mặt đi nơi khác quá thời gian cho phép!</span>";
+        }
+    </script>
+</body>
+</html>

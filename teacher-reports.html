@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê & Báo cáo kết quả - Giảng viên</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-hover: #172554;
+            --light-blue: #EFF6FF;
+            --bg-white: #FFFFFF;
+            --bg-gray: #F8FAFC;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --danger-red: #DC2626;
+            --success-green: #16A34A;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-gray); color: var(--text-dark); display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background-color: var(--primary-blue); color: var(--bg-white); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10; }
+        .sidebar-brand { padding: 1.5rem 1rem; font-size: 1.05rem; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: center; }
+        .sidebar-menu { list-style: none; padding: 1rem 0; flex-grow: 1; }
+        .sidebar-menu li a { display: block; padding: 0.85rem 1.5rem; color: #E2E8F0; text-decoration: none; font-size: 0.95rem; transition: 0.2s; }
+        .sidebar-menu li a:hover, .sidebar-menu li.active a { background-color: var(--primary-hover); color: var(--bg-white); border-left: 4px solid #60A5FA; }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.15); font-size: 0.9rem; }
+        .sidebar-footer a { color: #FCA5A5; text-decoration: none; }
+
+        .main-content { margin-left: 260px; flex-grow: 1; padding: 2rem; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: var(--bg-white); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+        .header-top h2 { color: var(--primary-blue); font-size: 1.3rem; }
+
+        /* Dropdown chọn môn ở góc phải */
+        .course-selector { display: flex; align-items: center; gap: 0.6rem; }
+        .course-selector label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        .course-selector select { padding: 0.5rem 0.9rem; border: 1.5px solid var(--primary-blue); border-radius: 6px; font-size: 0.92rem; font-weight: 600; color: var(--primary-blue); background-color: var(--light-blue); cursor: pointer; outline: none; }
+        .course-selector select:hover { background-color: #DBEAFE; }
+
+        /* 4 Cards Thống kê */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-white); padding: 1.25rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .stat-card span { font-size: 0.88rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .stat-card strong { font-size: 1.75rem; color: var(--primary-blue); }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 0.5rem; }
+        .section-title { font-size: 1.15rem; color: var(--primary-blue); font-weight: bold; }
+
+        .table-container { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
+        th, td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); }
+        th { background-color: var(--light-blue); color: var(--primary-blue); font-weight: 700; }
+        tr:hover { background-color: #F8FAFC; }
+
+        .btn { padding: 0.55rem 1.1rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.88rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-primary { background-color: var(--primary-blue); color: var(--bg-white); }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-outline { background: var(--bg-white); color: var(--primary-blue); border: 1px solid var(--primary-blue); }
+        .btn-outline:hover { background: var(--light-blue); }
+
+        .bottom-actions { display: flex; justify-content: flex-end; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-brand">QUẢN LÝ THI TRẮC NGHIỆM AI</div>
+        <ul class="sidebar-menu">
+            <li><a href="teacher-dashboard.html">Danh sách phòng thi</a></li>
+            <li><a href="teacher-questions.html">Ngân hàng câu hỏi</a></li>
+            <li><a href="teacher-classes.html">Quản lý danh sách lớp</a></li>
+            <li><a href="teacher-history.html">Lịch sử giám sát</a></li>
+            <li class="active"><a href="teacher-reports.html">Thống kê & Báo cáo</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <span>GV: ThS. Nguyễn A</span><br><a href="index.html">Đăng xuất</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header-top">
+            <h2>THỐNG KÊ & BÁO CÁO KẾT QUẢ KỲ THI</h2>
+            <div class="course-selector">
+                <label for="examSelect">Chọn môn / lớp thi:</label>
+                <select id="examSelect" onchange="changeExamReport()">
+                    <option value="DO_AN_1">Môn: Đồ Án 1 (Phòng 302)</option>
+                    <option value="MANG_MT">Môn: Nguyên lý Mạng máy tính (Phòng 204)</option>
+                    <option value="CSDL_NC">Môn: Cơ sở dữ liệu nâng cao (Phòng 401)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>Điểm trung bình (Mean)</span>
+                <strong id="statMean">7.8</strong>
+            </div>
+            <div class="stat-card">
+                <span>Điểm trung vị (Median)</span>
+                <strong id="statMedian">8.0</strong>
+            </div>
+            <div class="stat-card">
+                <span>Tỷ lệ đạt (≥ 5 điểm)</span>
+                <strong id="statPass" style="color: var(--success-green);">92%</strong>
+            </div>
+            <div class="stat-card">
+                <span>Tổng số bài đã nộp</span>
+                <strong id="statSubmitted">40/40</strong>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span class="section-title" id="tableHeading">DANH SÁCH CHI TIẾT KẾT QUẢ THÍ SINH - ĐỒ ÁN 1</span>
+            <button class="btn btn-outline" onclick="exportExcel()">📊 Xuất file Excel</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">SBD</th>
+                        <th style="width: 130px;">MSSV</th>
+                        <th>Họ tên thí sinh</th>
+                        <th style="width: 140px;">Số câu đúng</th>
+                        <th style="width: 120px;">Điểm số</th>
+                        <th style="width: 200px;">Trạng thái nộp</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    <!-- Dữ liệu điểm từng lớp đổ tự động bằng JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bottom-actions">
+            <button class="btn btn-primary" onclick="archiveExam()">ĐÓNG VÀ LƯU TRỮ KỲ THI</button>
+        </div>
+    </main>
+
+    <script>
+        const examReportsData = {
+            "DO_AN_1": {
+                title: "DANH SÁCH CHI TIẾT KẾT QUẢ THÍ SINH - ĐỒ ÁN 1 (PHÒNG 302)",
+                mean: "7.8",
+                median: "8.0",
+                passRate: "92%",
+                submitted: "40/40",
+                students: [
+                    { sbd: "01", mssv: "B24DCCN001", name: "Nguyễn Văn An", correct: "34 / 40", score: 8.5, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "02", mssv: "B24DCCN002", name: "Trần Thị Bình", correct: "32 / 40", score: 8.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "03", mssv: "B24DCCN003", name: "Phạm Văn Cường", correct: "18 / 40", score: 4.5, status: "Đã khóa bài (Vi phạm)", isViolation: true },
+                    { sbd: "04", mssv: "B24DCCN004", name: "Lê Hoàng Dũng", correct: "36 / 40", score: 9.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "05", mssv: "B24DCCN005", name: "Hoàng Thị Em", correct: "30 / 40", score: 7.5, status: "Đã nộp thành công", isViolation: false }
+                ]
+            },
+            "MANG_MT": {
+                title: "DANH SÁCH CHI TIẾT KẾT QUẢ THÍ SINH - NGUYÊN LÝ MẠNG MÁY TÍNH (PHÒNG 204)",
+                mean: "8.2",
+                median: "8.5",
+                passRate: "97%",
+                submitted: "35/35",
+                students: [
+                    { sbd: "01", mssv: "B24DCCN011", name: "Ngô Thanh Huyền", correct: "45 / 50", score: 9.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "02", mssv: "B24DCCN012", name: "Dương Văn Hùng", correct: "42 / 50", score: 8.4, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "03", mssv: "B24DCCN013", name: "Lý Thị Khánh", correct: "40 / 50", score: 8.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "04", mssv: "B24DCCN014", name: "Trịnh Quang Khải", correct: "37 / 50", score: 7.4, status: "Đã nộp thành công", isViolation: false }
+                ]
+            },
+            "CSDL_NC": {
+                title: "DANH SÁCH CHI TIẾT KẾT QUẢ THÍ SINH - CƠ SỞ DỮ LIỆU NÂNG CAO (PHÒNG 401)",
+                mean: "7.1",
+                median: "7.5",
+                passRate: "86%",
+                submitted: "38/38",
+                students: [
+                    { sbd: "01", mssv: "B24DCCN021", name: "Lương Văn Nam", correct: "32 / 40", score: 8.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "02", mssv: "B24DCCN022", name: "Phùng Thị Nga", correct: "28 / 40", score: 7.0, status: "Đã nộp thành công", isViolation: false },
+                    { sbd: "03", mssv: "B24DCCN023", name: "Tô Hoàng Nghĩa", correct: "16 / 40", score: 4.0, status: "Đình chỉ thi (2 khuôn mặt)", isViolation: true },
+                    { sbd: "04", mssv: "B24DCCN024", name: "Đoàn Thị Ngọc", correct: "34 / 40", score: 8.5, status: "Đã nộp thành công", isViolation: false }
+                ]
+            }
+        };
+
+        function changeExamReport() {
+            const selectedKey = document.getElementById('examSelect').value;
+            const data = examReportsData[selectedKey];
+
+            document.getElementById('statMean').innerText = data.mean;
+            document.getElementById('statMedian').innerText = data.median;
+            document.getElementById('statPass').innerText = data.passRate;
+            document.getElementById('statSubmitted').innerText = data.submitted;
+            document.getElementById('tableHeading').innerText = data.title;
+
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = "";
+
+            data.students.forEach(st => {
+                const scoreColor = st.score >= 5 ? 'var(--primary-blue)' : 'var(--danger-red)';
+                const statusColor = st.isViolation ? 'var(--danger-red)' : 'var(--success-green)';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${st.sbd}</strong></td>
+                        <td>${st.mssv}</td>
+                        <td>${st.name}</td>
+                        <td>${st.correct}</td>
+                        <td style="font-weight: bold; color: ${scoreColor};">${st.score.toFixed(1)}</td>
+                        <td style="font-weight: 600; color: ${statusColor};">${st.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportExcel() {
+            const examName = document.getElementById('examSelect').options[document.getElementById('examSelect').selectedIndex].text;
+            alert(`Đang xuất bảng điểm chi tiết (${examName}) ra định dạng .xlsx...`);
+        }
+
+        function archiveExam() {
+            const examName = document.getElementById('examSelect').options[document.getElementById('examSelect').selectedIndex].text;
+            if (confirm(`Xác nhận đóng và lưu trữ toàn bộ điểm số cùng log giám sát của [${examName}] vào kho lưu trữ?`)) {
+                alert("Đã lưu trữ kỳ thi thành công!");
+            }
+        }
+
+        window.onload = function() {
+            changeExamReport();
+        };
+    </script>
+</body>
+</html>

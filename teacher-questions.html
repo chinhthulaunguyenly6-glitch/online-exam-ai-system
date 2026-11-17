@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Ngân hàng Câu hỏi & Đề thi - Giảng viên</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-hover: #172554;
+            --light-blue: #EFF6FF;
+            --bg-white: #FFFFFF;
+            --bg-gray: #F8FAFC;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --success-green: #16A34A;
+            --warning-amber: #D97706;
+            --danger-red: #DC2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar bên trái chuẩn liên kết */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1rem;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.85rem 1.5rem;
+            color: #E2E8F0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: var(--primary-hover);
+            color: var(--bg-white);
+            border-left: 4px solid #60A5FA;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-footer a {
+            color: #FCA5A5;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--bg-white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .header-top h2 {
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 0.4rem;
+        }
+
+        .filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .search-input, .filter-select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: var(--bg-white);
+        }
+
+        .search-input {
+            width: 320px;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: var(--bg-white);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-blue);
+        }
+
+        .btn-danger {
+            background: #FEF2F2;
+            color: var(--danger-red);
+            border: 1px solid #FECACA;
+        }
+
+        .btn-danger:hover {
+            background: #FEE2E2;
+        }
+
+        .table-container {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.92rem;
+        }
+
+        th, td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        .badge-level {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .level-easy { background: #DCFCE7; color: var(--success-green); }
+        .level-medium { background: #FEF3C7; color: var(--warning-amber); }
+        .level-hard { background: #FEE2E2; color: var(--danger-red); }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background: var(--bg-white);
+            max-width: 650px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            height: 90px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar liên kết thông suốt -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">QUẢN LÝ THI TRẮC NGHIỆM AI</div>
+        <ul class="sidebar-menu">
+            <li><a href="teacher-dashboard.html">Danh sách phòng thi</a></li>
+            <li class="active"><a href="teacher-questions.html">Ngân hàng câu hỏi</a></li>
+            <li><a href="teacher-classes.html">Quản lý danh sách lớp</a></li>
+            <li><a href="teacher-history.html">Lịch sử giám sát</a></li>
+            <li><a href="teacher-reports.html">Thống kê & Báo cáo</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <span>GV: ThS. Nguyễn A</span><br>
+            <a href="index.html">Đăng xuất</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header-top">
+            <h2>QUẢN LÝ NGÂN HÀNG CÂU HỎI VÀ ĐỀ THI TRẮC NGHIỆM</h2>
+            <span>Môn: Đồ Án 1 (ISV 2025)</span>
+        </div>
+
+        <div class="section-title">
+            <span>DANH SÁCH CÂU HỎI TRONG KHO (Tổng số: 250 câu)</span>
+            <button class="btn btn-primary" onclick="openAddModal()">+ THÊM CÂU HỎI MỚI</button>
+        </div>
+
+        <div class="filter-toolbar">
+            <div class="filter-group">
+                <input type="text" class="search-input" placeholder="Tìm kiếm nội dung câu hỏi...">
+                <select class="filter-select">
+                    <option value="all">Tất cả mức độ</option>
+                    <option value="easy">Dễ</option>
+                    <option value="medium">Trung bình</option>
+                    <option value="hard">Khó</option>
+                </select>
+            </div>
+            <button class="btn btn-outline">Xuất file Excel</button>
+        </div>
+
+        <!-- Bảng danh sách câu hỏi phong phú và dài hơn -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">STT</th>
+                        <th>Nội dung câu hỏi</th>
+                        <th>Mức độ</th>
+                        <th>Đáp án đúng</th>
+                        <th style="width: 150px; text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>01</strong></td>
+                        <td>Giao thức nào hoạt động ở tầng Vận chuyển (Transport Layer) đảm bảo truyền dữ liệu tin cậy?</td>
+                        <td><span class="badge-level level-easy">Dễ</span></td>
+                        <td><strong>B. TCP</strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>02</strong></td>
+                        <td>Trong cơ sở dữ liệu quan hệ, khóa chính (Primary Key) có đặc điểm gì?</td>
+                        <td><span class="badge-level level-medium">Trung bình</span></td>
+                        <td><strong>B. Duy nhất & không NULL</strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>03</strong></td>
+                        <td>Thuật toán sắp xếp nào có độ phức tạp thời gian trung bình là O(n log n)?</td>
+                        <td><span class="badge-level level-medium">Trung bình</span></td>
+                        <td><strong>C. Quick Sort</strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>04</strong></td>
+                        <td>Thẻ HTML nào dùng để nhúng một tệp kịch bản JavaScript bên ngoài vào trang web?</td>
+                        <td><span class="badge-level level-easy">Dễ</span></td>
+                        <td><strong>A. <script src="..."></strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>05</strong></td>
+                        <td>Hàm băm (Hash Function) mật mã học an toàn có tính chất quan trọng nào dưới đây?</td>
+                        <td><span class="badge-level level-hard">Khó</span></td>
+                        <td><strong>D. Kháng va chạm (Collision Resistance)</strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>06</strong></td>
+                        <td>Trong mô hình OSI, cơ chế mã hóa và nén dữ liệu thuộc về tầng nào?</td>
+                        <td><span class="badge-level level-medium">Trung bình</span></td>
+                        <td><strong>C. Tầng Trình diễn (Presentation Layer)</strong></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Sửa</button>
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="confirm('Xóa câu hỏi này?')">Xóa</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal Thêm câu hỏi -->
+    <div class="modal-overlay" id="addQuestionModal">
+        <div class="modal-card">
+            <h3>THÊM CÂU HỎI TRẮC NGHIỆM MỚI</h3>
+            <div class="form-group">
+                <label>Nội dung câu hỏi:</label>
+                <textarea class="form-control" placeholder="Nhập nội dung câu hỏi..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Mức độ:</label>
+                <select class="form-control">
+                    <option value="easy">Dễ</option>
+                    <option value="medium">Trung bình</option>
+                    <option value="hard">Khó</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Đáp án A:</label>
+                <input type="text" class="form-control" placeholder="Nhập đáp án A">
+            </div>
+            <div class="form-group">
+                <label>Đáp án B:</label>
+                <input type="text" class="form-control" placeholder="Nhập đáp án B">
+            </div>
+            <div class="form-group">
+                <label>Đáp án C:</label>
+                <input type="text" class="form-control" placeholder="Nhập đáp án C">
+            </div>
+            <div class="form-group">
+                <label>Đáp án D:</label>
+                <input type="text" class="form-control" placeholder="Nhập đáp án D">
+            </div>
+            <div class="form-group">
+                <label>Đáp án đúng:</label>
+                <select class="form-control">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeAddModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="alert('Đã thêm câu hỏi vào ngân hàng thành công!'); closeAddModal();">LƯU CÂU HỎI</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addQuestionModal').style.display = 'flex';
+        }
+        function closeAddModal() {
+            document.getElementById('addQuestionModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

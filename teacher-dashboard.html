@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Giảng viên - Hệ thống Thi Trắc nghiệm AI</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-hover: #172554;
+            --light-blue: #EFF6FF;
+            --bg-white: #FFFFFF;
+            --bg-gray: #F8FAFC;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --success-green: #16A34A;
+            --warning-amber: #D97706;
+            --danger-red: #DC2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar bên trái chuẩn liên kết */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1rem;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.85rem 1.5rem;
+            color: #E2E8F0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: var(--primary-hover);
+            color: var(--bg-white);
+            border-left: 4px solid #60A5FA;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-footer a {
+            color: #FCA5A5;
+            text-decoration: none;
+        }
+
+        /* Main Content bên phải */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--bg-white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .header-top h2 {
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-weight: bold;
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 0.4rem;
+        }
+
+        /* Danh sách phòng thi card */
+        .exam-room-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .room-info h3 {
+            color: var(--primary-blue);
+            margin-bottom: 0.3rem;
+        }
+
+        .room-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.4rem;
+        }
+
+        .badge-live {
+            background-color: #DCFCE7;
+            color: var(--success-green);
+        }
+
+        .badge-upcoming {
+            background-color: #FEF3C7;
+            color: var(--warning-amber);
+        }
+
+        .btn {
+            padding: 0.65rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-disabled {
+            background-color: #CBD5E1;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Modal nhập mật khẩu phòng */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background: #FFFFFF;
+            max-width: 420px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 2rem;
+            border-top: 6px solid var(--primary-blue);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar chuẩn liên kết-->
+    <aside class="sidebar">
+        <div class="sidebar-brand">QUẢN LÝ THI TRẮC NGHIỆM AI</div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="teacher-dashboard.html">Danh sách phòng thi</a></li>
+            <li><a href="teacher-questions.html">Ngân hàng câu hỏi</a></li>
+            <li><a href="teacher-classes.html">Quản lý danh sách lớp</a></li>
+            <li><a href="teacher-history.html">Lịch sử giám sát</a></li>
+            <li><a href="teacher-reports.html">Thống kê & Báo cáo</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <span>GV: ThS. Nguyễn A</span><br>
+            <a href="index.html">Đăng xuất</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header-top">
+            <h2>CHÀO MỪNG QUÝ THẦY CÔ TRỞ LẠI HỆ THỐNG GIÁM SÁT</h2>
+            <span>Hôm nay: 20/10/2026</span>
+        </div>
+
+        <div class="section-title">DANH SÁCH PHÒNG THI HÔM NAY</div>
+
+        <!-- Phòng thi 1: Đang diễn ra -->
+        <div class="exam-room-card">
+            <div class="room-info">
+                <h3>Môn thi: Đồ Án 1 (Phòng 302)</h3>
+                <p><strong>Thời gian:</strong> 08:00 - 09:00 (20/10/2026) | <strong>Sĩ số:</strong> 40 thí sinh</p>
+                <span class="badge badge-live">● Đang diễn ra (Đang thi: 40 | Đã nộp: 0 | Vi phạm: 2)</span>
+            </div>
+            <button onclick="promptRoomPassword('Môn thi: Đồ Án 1 (Phòng 302)', 'teacher-monitor.html')" class="btn btn-primary">VÀO PHÒNG GIÁM SÁT</button>
+        </div>
+
+        <!-- Phòng thi 2: Đang diễn ra -->
+        <div class="exam-room-card">
+            <div class="room-info">
+                <h3>Môn thi: Nguyên lý Mạng máy tính (Phòng 204)</h3>
+                <p><strong>Thời gian:</strong> 09:15 - 10:15 (20/10/2026) | <strong>Sĩ số:</strong> 35 thí sinh</p>
+                <span class="badge badge-live">● Đang diễn ra (Đang thi: 35 | Đã nộp: 0 | Vi phạm: 0)</span>
+            </div>
+            <button onclick="promptRoomPassword('Môn thi: Nguyên lý Mạng máy tính (Phòng 204)', 'teacher-monitor.html')" class="btn btn-primary">VÀO PHÒNG GIÁM SÁT</button>
+        </div>
+
+        <!-- Phòng thi 3: Sắp diễn ra -->
+        <div class="exam-room-card">
+            <div class="room-info">
+                <h3>Môn thi: Cơ sở dữ liệu (Phòng 213)</h3>
+                <p><strong>Thời gian:</strong> 10:30 - 11:30 (20/10/2026) | <strong>Sĩ số:</strong> 30 thí sinh</p>
+                <span class="badge badge-upcoming">⏳ Sắp diễn ra</span>
+            </div>
+            <button class="btn btn-disabled" disabled>CHỜ ĐẾN GIỜ THI</button>
+        </div>
+    </main>
+
+    <!-- Modal Nhập Mật Khẩu Phòng Giám Sát -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-card">
+            <h3 style="color: var(--primary-blue); margin-bottom: 0.8rem; font-size: 1.2rem;">XÁC THỰC MẬT KHẨU GIÁM SÁT</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.2rem;" id="modalRoomName">Nhập mật khẩu do quản lý cấp để truy cập phòng thi.</p>
+            
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">Mật khẩu phòng thi:</label>
+                <input type="password" id="roomPasswordInput" placeholder="Nhập mật khẩu (Mặc định: 1234)" style="width: 100%; padding: 0.65rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem;">
+                <span id="errorMsg" style="color: var(--danger-red); font-size: 0.82rem; display: none; margin-top: 0.3rem;">Mật khẩu không chính xác! Vui lòng kiểm tra lại.</span>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.8rem;">
+                <button onclick="closePasswordModal()" class="btn btn-outline">Hủy</button>
+                <button onclick="verifyAndEnterRoom()" class="btn btn-primary">XÁC NHẬN VÀO</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let targetRoomUrl = "";
+
+        function promptRoomPassword(roomName, roomUrl) {
+            targetRoomUrl = roomUrl;
+            document.getElementById('modalRoomName').innerText = `Phòng: "${roomName}". Vui lòng nhập mật khẩu giám sát tương ứng để tiếp tục.`;
+            document.getElementById('roomPasswordInput').value = "";
+            document.getElementById('errorMsg').style.display = "none";
+            document.getElementById('passwordModal').style.display = "flex";
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = "none";
+        }
+
+        function verifyAndEnterRoom() {
+            let pass = document.getElementById('roomPasswordInput').value;
+            if (pass === "1234") { // Mật khẩu bảo mật phòng thi giả định
+                window.location.href = targetRoomUrl;
+            } else {
+                document.getElementById('errorMsg').style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>

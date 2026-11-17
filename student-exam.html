@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng thi Trực tuyến - Đồ Án 1</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-hover: #172554;
+            --light-blue: #EFF6FF;
+            --bg-white: #FFFFFF;
+            --bg-gray: #F1F5F9;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --success-green: #16A34A;
+            --warning-amber: #D97706;
+            --danger-red: #DC2626;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 2rem;
+        }
+
+
+        .exam-header {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            padding: 0.85rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+
+        .student-meta {
+            font-size: 0.95rem;
+        }
+
+
+        .timer-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 1.2rem;
+            border-radius: 6px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+
+        .exam-container {
+            max-width: 1320px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+
+        .questions-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+
+        .question-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            scroll-margin-top: 85px;
+        }
+
+
+        .question-title {
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+        }
+
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+
+        .option-item:hover {
+            background-color: var(--light-blue);
+            border-color: #93C5FD;
+        }
+
+
+        .option-item.selected {
+            background-color: var(--light-blue);
+            border-color: var(--primary-blue);
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+
+        .option-item input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+
+        .sidebar-column {
+            position: sticky;
+            top: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+
+        .sidebar-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+
+        .sidebar-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .webcam-wrapper {
+            width: 100%;
+            height: 180px;
+            background: #0F172A;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94A3B8;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+
+        .webcam-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+
+        .ai-status-badge {
+            margin-top: 0.6rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            background: #DCFCE7;
+            color: var(--success-green);
+        }
+
+
+        .ai-status-badge.warn {
+            background: #FEF3C7;
+            color: var(--warning-amber);
+        }
+
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.45rem;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 4px;
+            margin-bottom: 1rem;
+        }
+
+
+        .q-num-btn {
+            padding: 0.45rem 0;
+            border: 1px solid var(--border-color);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+
+        .q-num-btn:hover {
+            border-color: var(--primary-blue);
+        }
+
+
+        .q-num-btn.answered {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            border-color: var(--primary-blue);
+        }
+
+
+        .legend-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+
+        .legend-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+
+        .overlay-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+
+        .warning-card {
+            background: var(--bg-white);
+            max-width: 480px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            border-top: 6px solid var(--warning-amber);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+
+
+        .warning-card h2 {
+            color: var(--warning-amber);
+            margin-bottom: 0.8rem;
+            font-size: 1.35rem;
+        }
+
+
+        .warning-card p {
+            margin-bottom: 1.2rem;
+            font-size: 0.98rem;
+        }
+
+
+        .btn-ack {
+            background: var(--primary-blue);
+            color: var(--bg-white);
+            padding: 0.75rem 1.8rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+
+        .locked-card {
+            background: var(--bg-white);
+            max-width: 560px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 2.2rem;
+            text-align: center;
+            border-top: 6px solid var(--danger-red);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+
+        .locked-card h2 {
+            color: var(--danger-red);
+            margin-bottom: 0.8rem;
+            font-size: 1.45rem;
+        }
+
+
+        .locked-reason-box {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+
+
+        .locked-status-pill {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+
+    <header class="exam-header">
+        <div class="student-meta">
+            <strong>Nguyễn Văn A</strong> | MSSV: 20241234 | SBD: 02 — <strong>Môn: Đồ Án 1</strong>
+        </div>
+        <div class="timer-box" id="timerDisplay">Thời gian: 60:00</div>
+    </header>
+
+
+    <div class="exam-container">
+        <!-- Cột trái: 40 câu hỏi -->
+        <div class="questions-column" id="questionsContainer"></div>
+
+
+        <!-- Cột phải: Webcam & Bảng điều hướng kèm nút nộp bài -->
+        <aside class="sidebar-column">
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span>WEBCAM GIÁM SÁT AI</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Cảnh báo: <strong id="warnCounterText">0/3</strong></span>
+                </div>
+                <div class="webcam-wrapper">
+                    <video id="webcamVideo" autoplay playsinline muted></video>
+                </div>
+                <div class="ai-status-badge" id="aiStatusBadge">Trạng thái AI: Bình thường (OK)</div>
+            </div>
+
+
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span>DANH SÁCH CÂU HỎI</span>
+                    <span id="progressText" style="font-size: 0.85rem;">0/40 câu</span>
+                </div>
+                <div class="legend-row">
+                    <span><span class="legend-dot" style="background: var(--primary-blue);"></span>Đã làm</span>
+                    <span><span class="legend-dot" style="background: #FFF; border: 1px solid var(--border-color);"></span>Chưa làm</span>
+                </div>
+                <div class="question-grid" id="questionGrid"></div>
+                <!-- Nút nộp bài đã được đặt gọn gàng ngay dưới bảng câu hỏi -->
+                <button class="btn-submit" onclick="submitExam(false)">NỘP BÀI THI</button>
+            </div>
+        </aside>
+    </div>
+
+
+    <!-- Modal Cảnh báo lần 1 & 2 -->
+    <div class="overlay-modal" id="warningModal">
+        <div class="warning-card">
+            <h2 id="warnModalTitle">CẢNH BÁO HỆ THỐNG AI (LẦN 1/3)</h2>
+            <p id="warnModalDesc">Hệ thống phát hiện bạn không nhìn thẳng vào màn hình!</p>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">Vui lòng tập trung làm bài.</p>
+            <button class="btn-ack" onclick="closeWarningModal()">ĐÃ HIỂU - TIẾP TỤC LÀM BÀI</button>
+        </div>
+    </div>
+
+
+    <!-- Màn hình Khóa bài thi -->
+    <div class="overlay-modal" id="lockedModal">
+        <div class="locked-card">
+            <h2>BÀI THI CỦA BẠN ĐÃ BỊ KHÓA</h2>
+            <div class="locked-reason-box" id="lockedReasonText">
+                Lý do khóa: Phát hiện sử dụng điện thoại di động!
+            </div>
+            <p style="font-size: 0.94rem; margin-bottom: 1rem;">
+                Hệ thống AI đã tự động khóa quyền làm bài và gửi bằng chứng hình ảnh đến <strong>Giảng viên giám sát</strong>.
+            </p>
+            <div class="locked-status-pill">Trạng thái: Đang chờ giảng viên duyệt</div>
+            <div>
+                <a href="student-home.html" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">← Về trang chủ</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const TOTAL_QUESTIONS = 40;
+        let userAnswers = {};
+        let warningCount = 0;
+        let isLocked = false;
+        let timeLeft = 60 * 60;
+
+
+        // Bật webcam
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => { document.getElementById('webcamVideo').srcObject = stream; })
+            .catch(err => { console.log("Không mở được camera trực tiếp."); });
+
+
+        // Đồng hồ đếm ngược
+        const timerInterval = setInterval(() => {
+            if (isLocked) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = `Thời gian: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (timeLeft <= 0) { clearInterval(timerInterval); submitExam(true); }
+        }, 1000);
+
+
+        // Render 40 câu hỏi mẫu
+        const sampleQuestions = [
+            { q: "Giao thức nào hoạt động ở tầng Vận chuyển (Transport Layer) đảm bảo truyền dữ liệu tin cậy?", opts: ["UDP", "TCP", "IP", "ICMP"] },
+            { q: "Trong cơ sở dữ liệu quan hệ, khóa chính (Primary Key) có đặc điểm gì?", opts: ["Có thể chứa giá trị NULL", "Duy nhất và không được NULL", "Có thể trùng lặp giữa các hàng", "Chỉ dùng cho kiểu số nguyên"] },
+            { q: "Thuật toán sắp xếp nào có độ phức tạp trung bình là O(n log n)?", opts: ["Bubble Sort", "Insertion Sort", "Quick Sort", "Selection Sort"] },
+            { q: "Thẻ HTML nào dùng để liên kết một file CSS bên ngoài vào trang web?", opts: ["<script>", "<style>", "<link>", "<meta>"] }
+        ];
+
+
+        function renderExam() {
+            const qContainer = document.getElementById('questionsContainer');
+            const grid = document.getElementById('questionGrid');
+
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const template = sampleQuestions[(i - 1) % sampleQuestions.length];
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${i}`;
+
+
+                let optionsHtml = '';
+                const labels = ['A', 'B', 'C', 'D'];
+                template.opts.forEach((optText, idx) => {
+                    const letter = labels[idx];
+                    optionsHtml += `
+                        <label class="option-item" id="opt-${i}-${letter}" onclick="selectAnswer(${i}, '${letter}')">
+                            <input type="radio" name="q_${i}" value="${letter}">
+                            <span><strong>${letter}.</strong> ${optText}</span>
+                        </label>
+                    `;
+                });
+
+
+                card.innerHTML = `<div class="question-title">Câu ${i}: ${template.q}</div><div class="options-list">${optionsHtml}</div>`;
+                qContainer.appendChild(card);
+
+
+                const btn = document.createElement('button');
+                btn.className = 'q-num-btn';
+                btn.id = `nav-btn-${i}`;
+                btn.innerText = i;
+                btn.onclick = () => document.getElementById(`question-${i}`).scrollIntoView({ behavior: 'smooth' });
+                grid.appendChild(btn);
+            }
+        }
+        renderExam();
+
+
+        function selectAnswer(qIndex, letter) {
+            if (isLocked) return;
+            userAnswers[qIndex] = letter;
+            ['A', 'B', 'C', 'D'].forEach(l => {
+                document.getElementById(`opt-${qIndex}-${l}`).classList.remove('selected');
+            });
+            document.getElementById(`opt-${qIndex}-${letter}`).classList.add('selected');
+            document.getElementById(`nav-btn-${qIndex}`).classList.add('answered');
+            document.getElementById('progressText').innerText = `${Object.keys(userAnswers).length}/${TOTAL_QUESTIONS} câu`;
+        }
+
+
+        // Hàm giả lập kích hoạt vi phạm AI từ hệ thống ngầm để test (nếu cần gọi từ console hoặc trigger tự động)
+        function triggerAIViolation(type) {
+            if (isLocked) return;
+            if (type === 'PHONE') {
+                lockExam("Phát hiện sử dụng điện thoại di động (Khóa ngay lập tức từ lần vi phạm đầu tiên)!");
+                return;
+            }
+
+
+            warningCount++;
+            document.getElementById('warnCounterText').innerText = `${warningCount}/3`;
+
+
+            const badge = document.getElementById('aiStatusBadge');
+            badge.className = 'ai-status-badge warn';
+            badge.innerText = `Cảnh báo AI lần ${warningCount}/3`;
+
+
+            const reasonText = type === 'LOOK_AWAY'
+                ? "Phát hiện thí sinh quay mặt đi chỗ khác quá 5 giây!"
+                : "Phát hiện có người thứ 2 xuất hiện trong khung hình quá 10 giây!";
+
+
+            if (warningCount >= 3) {
+                lockExam(`Vi phạm quy chế thi lần thứ 3: ${reasonText}`);
+            } else {
+                document.getElementById('warnModalTitle').innerText = `CẢNH BÁO HỆ THỐNG AI (LẦN ${warningCount}/3)`;
+                document.getElementById('warnModalDesc').innerText = reasonText;
+                document.getElementById('warningModal').style.display = 'flex';
+            }
+        }
+
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').style.display = 'none';
+        }
+
+
+        function lockExam(reason) {
+            isLocked = true;
+            clearInterval(timerInterval);
+            document.getElementById('warningModal').style.display = 'none';
+            document.getElementById('lockedReasonText').innerText = reason;
+            document.getElementById('lockedModal').style.display = 'flex';
+        }
+
+
+        function submitExam(isAuto) {
+            if (isLocked) return;
+            const answeredCount = Object.keys(userAnswers).length;
+            if (!isAuto && !confirm(`Bạn đã làm ${answeredCount}/${TOTAL_QUESTIONS} câu. Bạn có chắc muốn nộp bài?`)) return;
+            localStorage.setItem('examAnswered', answeredCount);
+            localStorage.setItem('examWarnings', warningCount);
+            window.location.href = 'student-result.html';
+        }
+    </script>
+</body>
+</html>
