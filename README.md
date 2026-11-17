@@ -68,7 +68,8 @@ online-exam-ai-system/
 │   └── schema.sql              # Mã lệnh SQL khởi tạo 7 bảng và dữ liệu mẫu
 ├── .gitignore                  # Loại trừ thư mục nặng/bảo mật (node_modules, .env)
 └── README.md                   # Tài liệu đặc tả dự án
-
-
-
-  
+```
+## NHÓM THỰC HIỆN
+* **Nhóm 6**
+* Học phần: **Đồ Án 1**
+* Trường Quốc tế- Đại học Quốc gia Hà Nội
